@@ -1,0 +1,201 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap'); */
+
+
+
+:root {
+    --title-color: #0d0d0d;
+    --para-color: #f2f4f3;
+    --button-color: linear-gradient(to right, #f83600 0%, #f9d423 100%)
+    --font: Inter, sans-serif;
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-weight: 900;
+}
+
+body {
+    font-family: lato;
+    font-weight: 960px;
+    background-color: #f4f5f5;
+    overflow-x: hidden;
+
+}
+
+/* Custom Modern Table Styling */
+.custom-modern-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.custom-modern-table thead th {
+  background-color: #f8fafc;
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.table-row-hover {
+  transition: background-color 0.15s ease-in-out;
+}
+
+.table-row-hover:hover {
+  background-color: #f8fafc;
+}
+
+/* Status Pill Select */
+.status-pill-select {
+  border: 1px solid transparent;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.status-pill-select.published {
+  background-color: #ecfdf5;
+  color: #059669;
+  border-color: #a7f3d0;
+}
+
+.status-pill-select.draft {
+  background-color: #fffbeb;
+  color: #d97706;
+  border-color: #fde68a;
+}
+
+.status-pill-select.archived {
+  background-color: #f1f5f9;
+  color: #64748b;
+  border-color: #cbd5e1;
+}
+
+/* Search Wrapper Positioning */
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon-left {
+  position: absolute;
+  left: 14px;
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 12px;
+}
+
+/* Action Buttons */
+.btn-icon-action {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-outline-light-custom {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.btn-outline-light-custom:hover {
+  background-color: #e2e8f0;
+  color: #0f172a;
+}
+
+.btn-outline-danger-custom {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #ef4444;
+}
+
+.btn-outline-danger-custom:hover {
+  background-color: #ef4444;
+  color: #ffffff;
+}
+
+.x-small {
+  font-size: 0.75rem;
+}
+
+/* Container & Input Tweaks */
+.add-course-container {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+/* Modern Elevated Inputs */
+.modern-input-group {
+  background-color: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.modern-input-group:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  background-color: #ffffff;
+}
+
+.modern-input-group .input-group-text {
+  background-color: transparent;
+  border: none;
+  color: #64748b;
+  padding-left: 14px;
+}
+
+.modern-input-group .form-control,
+.modern-input-group .form-select {
+  border: none;
+  background-color: transparent;
+  padding: 10px 12px;
+  font-size: 0.875rem;
+  color: #0f172a;
+}
+
+.modern-input-group .form-control:focus,
+.modern-input-group .form-select:focus {
+  box-shadow: none;
+}
+
+.modern-field {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.modern-field:focus {
+  background-color: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.tracking-wide {
+  letter-spacing: 0.05em;
+}
+
+.module-card {
+  border-left: 4px solid #2563eb !important;
+}
