@@ -14,9 +14,9 @@ import Footer from "./components/Footer";
 import NotFound from "./components/NotFound";
 import Cart from "./pages/cart/Cart";
 import Hero from "./components/Hero";
+import About from "./pages/companyDetails/About";
 
 // ── Lazy: Public Pages ──────────────────────────────────────────────────────
-const About = lazy(() => import("./pages/companyDetails/About"));
 const Whatwedo = lazy(() => import("./pages/companyDetails/Whatwedo"));
 const Contact = lazy(() => import("./pages/companyDetails/Contact"));
 const Courses = lazy(() => import("./pages/courses/Courses"));
