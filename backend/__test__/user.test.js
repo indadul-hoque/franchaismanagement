@@ -1,10 +1,16 @@
-import { register } from "../controlers/users.controler.js";
-import Users from "../models/users.model.js";
-import bcrypt from "bcrypt";
+import { register } from "../src/controllers/user.controller.js";
+import * as userService from "../src/services/user.service.js";
+import ApiError from "../src/utils/ApiError.js";
 
-// Mock external dependencies
-jest.mock("../models/users.model.js");
-jest.mock("bcrypt");
+// Mock the service — controller should delegate all DB work to it
+jest.mock("../src/services/user.service.js");
+jest.mock("../src/utils/ApiError.js", () => {
+  return jest.fn().mockImplementation((statusCode, message) => {
+    const err = new Error(message);
+    err.statusCode = statusCode;
+    return err;
+  });
+});
 
 describe("Register Controller Unit Tests", () => {
   let req, res;
@@ -18,8 +24,10 @@ describe("Register Controller Unit Tests", () => {
     jest.clearAllMocks();
   });
 
+  // ── Input validation (controller's own responsibility) ──────────────────────
+
   it("should return 400 if required fields are missing", async () => {
-    req.body = { email: "test@example.com" }; // Missing firstName, lastName, phone, password
+    req.body = { email: "test@example.com" }; // missing firstName, lastName, phone, password
 
     await register(req, res);
 
@@ -50,7 +58,7 @@ describe("Register Controller Unit Tests", () => {
     req.body = {
       firstName: "John",
       lastName: "Doe",
-      phone: "123456", // Invalid phone format according to /^[6-9]\d{9}$/
+      phone: "123456", // must match /^[6-9]\d{9}$/
       email: "john@example.com",
       password: "Password123",
     };
@@ -63,7 +71,40 @@ describe("Register Controller Unit Tests", () => {
     });
   });
 
-  it("should return 400 if user or phone already exists", async () => {
+  // ── Service delegation (controller calls service, returns its result) ────────
+
+  it("should return 201 when service registers user successfully", async () => {
+    req.body = {
+      firstName: "John",
+      lastName: "Doe",
+      phone: "9876543210",
+      email: "newuser@example.com",
+      password: "Password123",
+    };
+
+    const fakeUser = { _id: "abc123", firstName: "John", role: "guest" };
+    userService.registerUser.mockResolvedValue(fakeUser);
+
+    await register(req, res);
+
+    expect(userService.registerUser).toHaveBeenCalledWith({
+      firstName: "John",
+      lastName: "Doe",
+      phone: "9876543210",
+      email: "newuser@example.com",
+      password: "Password123",
+    });
+    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        success: true,
+        message: "Account creation successful. Please login",
+        users: fakeUser,
+      })
+    );
+  });
+
+  it("should return 400 if service throws ApiError (e.g. duplicate user)", async () => {
     req.body = {
       firstName: "John",
       lastName: "Doe",
@@ -72,7 +113,8 @@ describe("Register Controller Unit Tests", () => {
       password: "Password123",
     };
 
-    Users.findOne.mockResolvedValue({ email: "existing@example.com" });
+    const apiErr = { statusCode: 400, message: "Phone or Email already registered" };
+    userService.registerUser.mockRejectedValue(apiErr);
 
     await register(req, res);
 
@@ -82,36 +124,8 @@ describe("Register Controller Unit Tests", () => {
     });
   });
 
-  it("should register a new user successfully", async () => {
-    req.body = {
-      firstName: "John",
-      lastName: "Doe",
-      phone: "9876543210",
-      email: "newuser@example.com",
-      password: "Password123",
-    };
-
-    Users.findOne.mockResolvedValue(null);
-    bcrypt.hash.mockResolvedValue("hashedPassword123");
-    Users.prototype.save = jest.fn().mockResolvedValue(true);
-
-    await register(req, res);
-
-    expect(bcrypt.hash).toHaveBeenCalledWith("Password123", 10);
-    expect(Users.prototype.save).toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        success: true,
-        message: "Account creation successful. Please login",
-      }),
-    );
-  });
-
-  it("should return 500 when database save fails", async () => {
-    const consoleSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
+  it("should return 500 when service throws an unexpected error", async () => {
+    const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
     req.body = {
       firstName: "John",
@@ -121,11 +135,7 @@ describe("Register Controller Unit Tests", () => {
       password: "Password123",
     };
 
-    Users.findOne.mockResolvedValue(null);
-    bcrypt.hash.mockResolvedValue("hashedPassword123");
-    Users.prototype.save = jest
-      .fn()
-      .mockRejectedValue(new Error("Database Failure"));
+    userService.registerUser.mockRejectedValue(new Error("Database Failure"));
 
     await register(req, res);
 
